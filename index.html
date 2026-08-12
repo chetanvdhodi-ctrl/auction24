@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AUCTION24 — Live Cricket Auction</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><div class="brand">AUCTION<span>24</span></div><div class="live"><i></i> LIVE AUCTION</div></header>
+
+<main>
+<section class="top">
+  <div><p>CRICKET AUCTION</p><h1>LIVE BIDDING<br><span>CONTROL CENTER</span></h1><a href="#auction">Start Auction ↓</a></div>
+  <div class="timer"><small>AUCTION STATUS</small><b id="status">READY</b><strong id="clock">00:00</strong></div>
+</section>
+
+<section id="auction" class="grid">
+  <div class="card player-card">
+    <div class="photo">🏏</div>
+    <div class="player">
+      <small>CURRENT PLAYER</small><h2 id="playerName">PLAYER ONE</h2><p id="role">All-Rounder • Right Hand</p>
+      <div class="price"><div><small>BASE</small><b id="base">₹10,000</b></div><div><small>CURRENT BID</small><b id="bid">₹10,000</b></div></div>
+      <div class="actions"><button onclick="bid(5000)">+ ₹5K BID</button><button onclick="bid(10000)">+ ₹10K BID</button><button class="sold" onclick="sold()">SOLD ✓</button></div>
+    </div>
+  </div>
+  <aside class="card queue"><h3>PLAYER QUEUE</h3><div id="queue"></div></aside>
+</section>
+
+<section class="stats">
+  <div><b id="soldCount">0</b><span>SOLD</span></div><div><b id="unsoldCount">0</b><span>UNSOLD</span></div><div><b id="bidCount">0</b><span>BIDS</span></div><div><b>8</b><span>TEAMS</span></div>
+</section>
+
+<section class="card admin">
+<h2>ADMIN QUICK PANEL</h2>
+<div class="form"><input id="newPlayer" placeholder="Player name"><select id="newRole"><option>Batsman</option><option>Bowler</option><option>All-Rounder</option><option>Wicketkeeper</option></select><input id="newBase" type="number" placeholder="Base price"><button onclick="addPlayer()">ADD PLAYER</button></div>
+<p class="hint">This version stores auction data in your browser. For real multi-device live bidding, a database/backend must be connected.</p>
+</section>
+</main>
+<footer>AUCTION24 • Professional Cricket Auction Platform</footer>
+<script>
+let players=[
+{name:"PLAYER ONE",role:"All-Rounder • Right Hand",base:10000},
+{name:"PLAYER TWO",role:"Batsman • Right Hand",base:15000},
+{name:"PLAYER THREE",role:"Bowler • Left Arm",base:12000},
+{name:"PLAYER FOUR",role:"Wicketkeeper • Right Hand",base:18000}
+], current=0,bids=0,soldCount=0,unsoldCount=0;
+const money=n=>"₹"+n.toLocaleString("en-IN");
+function render(){let p=players[current];document.getElementById("playerName").textContent=p.name;document.getElementById("role").textContent=p.role;document.getElementById("base").textContent=money(p.base);document.getElementById("bid").textContent=money(p.bid||p.base);document.getElementById("queue").innerHTML=players.map((x,i)=>`<div class="${i===current?'active':''}"><b>${i+1}</b><span>${x.name}</span><small>${x.sold?'SOLD':money(x.bid||x.base)}</small></div>`).join("");document.getElementById("soldCount").textContent=soldCount;document.getElementById("unsoldCount").textContent=unsoldCount;document.getElementById("bidCount").textContent=bids}
+function bid(v){players[current].bid=(players[current].bid||players[current].base)+v;bids++;document.getElementById("status").textContent="BIDDING";render()}
+function sold(){players[current].sold=true;soldCount++;next()}
+function next(){if(current<players.length-1){current++;document.getElementById("status").textContent="NEXT PLAYER";render()}else{document.getElementById("status").textContent="AUCTION COMPLETE";render()}}
+function addPlayer(){let n=document.getElementById("newPlayer").value.trim(),r=document.getElementById("newRole").value,b=Number(document.getElementById("newBase").value)||10000;if(!n)return;players.push({name:n.toUpperCase(),role:r,base:b});document.getElementById("newPlayer").value="";render()}
+render();
+</script>
+</body></html>
